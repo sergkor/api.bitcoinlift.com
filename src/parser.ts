@@ -1,4 +1,4 @@
-import { parseStream } from "fast-csv";
+const csv = require('fast-csv');
 const mysql = require('mysql2');
 import * as fs from 'fs';
 import {config} from './config';
@@ -12,18 +12,18 @@ try {
     const stream = fs.createReadStream(file);
     let count = 0;
     const connection = mysql.createConnection(config.dbConnectionConfig);
-    const parser = parseStream(stream, {headers: true, ignoreEmpty: true, trim: true, discardUnmappedColumns: true});
+    const parser = csv.parseStream(stream, {objectMode: true, headers: false});
     parser.on('error', (e) => {
                 console.error("ERROR", e);
             })
-            .on('data', row => {
-                console.log(count++, row.address);
+            .on('data', data => {
+                console.log(count++, data[0]);
                 parser.pause();
                 connection.execute(
                     'INSERT INTO address (id) VALUES (?)',
-                    [row.address],(err, res) => {
+                    [data[0]],(err, res) => {
                         if (err) console.log(err);
-                        parseStream.resume();
+                        parser.resume();
                     });
             })
             .on('end', (rowCount: number) => {
