@@ -1,0 +1,13 @@
+{
+  "swagger": {
+    "outputDirectory": "./dist",
+    "entryFile": "./src/index.ts",
+    "specVersion": 2,
+    "schemes": ["http","https"]
+  },
+  "routes": {
+    "entryFile": "./src/index.ts",
+    "routesDir": "./generated",
+    "authenticationModule": "./src/authentication.ts"
+  }
+}

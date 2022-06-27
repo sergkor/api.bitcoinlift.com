@@ -1,0 +1,53 @@
+{
+  "name": "api.bitcoinlift.com",
+  "version": "0.0.1",
+  "description": "API for bitconlift.com",
+  "scripts": {
+    "start": "./node_modules/.bin/ts-node  ./src/parser.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergkor/api.bitcoinlift.com.git"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "@typescript-eslint/no-floating-promises": 2,
+      "@typescript-eslint/require-await": 2,
+      "@typescript-eslint/no-misused-promises": 2,
+      "@typescript-eslint/no-unused-vars": 1,
+      "@typescript-eslint/no-use-before-define": 1,
+      "no-param-reassign": 1,
+      "no-return-await": 1,
+      "consistent-return": 1
+    },
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    }
+  },
+  "author": "Mindstrong",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^2.3.3",
+    "dotenv": "^6.0.0",
+    "dotenv-expand": "^4.0.1",
+    "fast-csv": "^4.3.6",
+    "tsoa": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^10.17.32",
+    "jest": "24.1.0",
+    "ts-jest": "^24.0.2",
+    "ts-node": "8.0.2",
+    "typescript": "^3.4.5"
+  },
+  "bugs": {
+    "url": "https://github.com/sergkor/api.bitcoinlift.com/issues"
+  },
+  "homepage": "https://github.com/sergkor/api.bitcoinlift.com/blob/main/README.md"
+}

@@ -1,0 +1,35 @@
+{
+    "extends": "tslint:latest",
+    "linterOptions": {
+        "exclude": [
+            "node_modules"
+        ]
+    },
+    "rules": {
+        "variable-name": {
+            "options": "allow-leading-underscore"
+        },
+        "max-classes-per-file": {
+            "options": [
+                2
+            ]
+        },
+        "no-default-export": false,
+        "no-submodule-imports": {
+            "options": [
+                "tsutils"
+            ]
+        },
+        "restrict-plus-operands": true,
+        "strict-boolean-expressions": false,
+        "no-console": false,
+        "object-literal-sort-keys": false,
+        "one-variable-per-declaration": false,
+        "ordered-imports": false,
+        "only-arrow-functions": false,
+        "no-string-literal": false,
+        "no-implicit-dependencies": false,
+        "arrow-parens": false,
+        "no-string-throw": false
+    }
+}
