@@ -21,15 +21,12 @@ try {
                 console.log(count++, row.address);
                 connection.execute(
                     'INSERT INTO address (id) VALUES (?)',
-                    [row.address],
-                    function(err) {
-                        if(err) {
-                            console.log('.');
-                        }
-                    }
-                );
+                    [row.address],(err, res) => {
+                        console.log(err, res);
+                    });
             })
             .on('end', (rowCount: number) => {
+                connection.end();
                 console.log("END", `Parsed ${rowCount} rows`);
             });
 } catch (error) {
