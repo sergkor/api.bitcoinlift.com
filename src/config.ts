@@ -1,6 +1,7 @@
 import * as package_json from '../package.json';
 
 const {env} = process;
+require('dotenv').config();
 const nodeEnv = env.env ? env.env.toLowerCase() : 'dev';
 
 export const config = {
