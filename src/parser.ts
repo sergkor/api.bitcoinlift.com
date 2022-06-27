@@ -12,14 +12,13 @@ try {
     const stream = fs.createReadStream(file);
     let count = 0;
     const connection = mysql.createConnection(config.dbConnectionConfig);
-    parseStream(stream, {headers: true, ignoreEmpty: true, trim: true, discardUnmappedColumns: true})
-            .on('error', (e) => {
+    const parser = parseStream(stream, {headers: true, ignoreEmpty: true, trim: true, discardUnmappedColumns: true});
+    parser.on('error', (e) => {
                 console.error("ERROR", e);
-
             })
             .on('data', row => {
                 console.log(count++, row.address);
-                parseStream.pause();
+                parser.pause();
                 connection.execute(
                     'INSERT INTO address (id) VALUES (?)',
                     [row.address],(err, res) => {
