@@ -12,29 +12,25 @@ try {
     const stream = fs.createReadStream(file);
     let count = 0;
     const connection = mysql.createConnection(config.dbConnectionConfig);
-    connection.execute(
-        'INSERT INTO address (id) VALUES (?)',
-        ["11111111"],(err, res) => {
-            console.log('INIT:',err, res);
-            parseStream(stream, {headers: true})
-                .on('error', (e) => {
-                    console.error("ERROR", e);
+    parseStream(stream, {headers: true})
+            .on('error', (e) => {
+                console.error("ERROR", e);
 
-                })
-                .on('data', row => {
-                    console.log(count++, row.address);
-                    connection.execute(
-                        'INSERT INTO address (id) VALUES (?)',
-                        [row.address],(err, res) => {
-                            console.log(err, res);
-                        });
-                })
-                .on('end', (rowCount: number) => {
-                    connection.end();
-                    console.log("END", `Parsed ${rowCount} rows`);
-                });
-        });
-
+            })
+            .on('data', row => {
+                console.log(count++, row.address);
+                stream.pause();
+                connection.execute(
+                    'INSERT INTO address (id) VALUES (?)',
+                    [row.address],(err, res) => {
+                        if (err) console.log(err);
+                        stream.resume();
+                    });
+            })
+            .on('end', (rowCount: number) => {
+                console.log("END", `Parsed ${rowCount} rows`);
+                connection.end();
+            });
 } catch (error) {
     console.log('parse error', error);
 }
