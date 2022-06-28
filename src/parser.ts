@@ -1,6 +1,7 @@
 const csv = require('fast-csv');
 const mysql = require('mysql2');
 const LRU = require('lru-cache');
+const stream = require('stream');
 import * as fs from 'fs';
 import {config} from './config';
 
@@ -10,33 +11,88 @@ if (!fs.existsSync(file)) {
     process.exit(1);
 }
 const cache = new LRU({max: 1000000});
-try {
-    const stream = fs.createReadStream(file);
+const loaded = [];
+const HEADER = 'INSERT INTO address VALUES ';
+const CHUNK_SIZE = 10000;
+
+const parseFile = () => {
+    const streamFromFile = fs.createReadStream(file);
+    const result = fs.createWriteStream('dump.sql', {
+        flags: 'a'
+    });
     let count = 0;
-    const connection = mysql.createConnection(config.dbConnectionConfig);
-    const parser = csv.parseStream(stream, {objectMode: true, headers: false});
+    let chunk = [];
+    const parser = csv.parseStream(streamFromFile, {objectMode: true, headers: false});
     parser.on('error', (e) => {
-                console.error("ERROR", e);
-            })
-            .on('data', data => {
-                console.log(count++, data[0]);
-                if (!cache.get(data[0])) {
-                    parser.pause();
-                    connection.execute(
-                        'INSERT INTO address (id) VALUES (?)',
-                        [data[0]],(err, res) => {
-                            if (err) {
-                                console.log(err);
+        console.error("ERROR", e);
+    }).on('data', data => {
+            const address = data[0];
+            if (!cache.get(address)) {
+                if (loaded.includes(address)) {
+                    cache.set(address, true);
+                } else {
+                    console.log(count++, address);
+                    chunk.push(address);
+                    if (count % CHUNK_SIZE === 0) {
+                        parser.pause();
+                        result.write(HEADER);
+                        let f = true;
+                        chunk.forEach(element => {
+                            if(f) {
+                                f = false;
+                            } else {
+                                result.write(",");
                             }
-                            cache.set(data[0], true);
-                            parser.resume();
+                            result.write("('");
+                            result.write(element);
+                            result.write("')");
                         });
+                        result.write(";\n");
+                        cache.set(address, true);
+                        parser.resume();
+                    }
                 }
-            })
-            .on('end', (rowCount: number) => {
-                console.log("END", `Parsed ${rowCount} rows`);
-                connection.end();
-            });
+            }
+        })
+        .on('end', (rowCount: number) => {
+            console.log("END", `Parsed ${rowCount} rows`);
+            if(chunk.length) {
+                result.write(HEADER);
+                let f = true;
+                chunk.forEach(element => {
+                    if(f) {
+                        f = false;
+                    } else {
+                        result.write(",");
+                    }
+                    result.write("('");
+                    result.write(element);
+                    result.write("')");
+                });
+                result.write(";\n");
+            }
+            result.end();
+        });
+}
+
+try {
+    const connection = mysql.createConnection(config.dbConnectionConfig);
+    connection.query('select id from address')
+        .on('error', function(err) {
+            console.log('ERROR', err);
+            process.exit(1);
+        })
+        .stream()
+        .pipe(new stream.Transform({
+            objectMode: true,
+            transform: function(row,encoding,callback) {
+                loaded.push(row.id);
+                callback()
+            }
+        })).on('finish',() => {
+            connection.end();
+            parseFile();
+        } );
 } catch (error) {
     console.log('parse error', error);
 }
