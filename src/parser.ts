@@ -49,6 +49,8 @@ const parseFile = () => {
                         });
                         result.write(";\n");
                         cache.set(address, true);
+                        chunk = [];
+                        console.log('flushed successfully:', count);
                         parser.resume();
                     }
                 }
@@ -87,10 +89,14 @@ try {
             objectMode: true,
             transform: function(row,encoding,callback) {
                 loaded.push(row.id);
+                if (loaded.length % 100000 === 0) {
+                    console.log('loaded:', loaded.length);
+                }
                 callback()
             }
         })).on('finish',() => {
             connection.end();
+            console.log('pre loaded success');
             parseFile();
         } );
 } catch (error) {
