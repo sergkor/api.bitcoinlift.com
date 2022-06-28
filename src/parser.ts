@@ -52,8 +52,7 @@ const parseFile = () => {
                         cache.set(address, true);
                         chunk = [];
                         console.log('flushed successfully:', count);
-                        result.end();
-                        process.exit(1);
+                        result.end(()=> process.exit(0));
                         parser.resume();
                     }
                 }
