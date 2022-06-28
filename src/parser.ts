@@ -52,6 +52,8 @@ const parseFile = () => {
                         cache.set(address, true);
                         chunk = [];
                         console.log('flushed successfully:', count);
+                        result.end();
+                        process.exit(1);
                         parser.resume();
                     }
                 }
@@ -97,7 +99,7 @@ try {
             }
         })).on('finish',() => {
             connection.end();
-            console.log('pre loaded success');
+            console.log('pre loaded success - loaded:', loaded.length);
             parseFile();
         } );
 } catch (error) {
