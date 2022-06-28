@@ -30,10 +30,11 @@ const parseFile = () => {
             if (!cache.get(address)) {
                 if (loaded.includes(address)) {
                     cache.set(address, true);
+                    console.log('loaded', address);
                 } else {
                     console.log(count++, address);
                     chunk.push(address);
-                    if (count % CHUNK_SIZE === 0) {
+                    if (chunk.length >= CHUNK_SIZE) {
                         parser.pause();
                         result.write(HEADER);
                         let f = true;
