@@ -15,5 +15,6 @@ export const config = {
         password: env.password,
         database: env.database
     },
-    start: env.start ? convertToNumber(env.start) : 0
+    start: env.start ? convertToNumber(env.start) : 0,
+    startChar: env.startChar
 };
