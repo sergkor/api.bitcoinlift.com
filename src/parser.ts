@@ -8,7 +8,7 @@ if (!fs.existsSync(file)) {
     process.exit(1);
 }
 const loaded = new Set();
-const HEADER = 'INSERT INTO address VALUES ';
+const HEADER = `INSERT INTO address_${config.startChar} VALUES `;
 const CHUNK_SIZE = 50000;
 
 const parseFile = () => {
