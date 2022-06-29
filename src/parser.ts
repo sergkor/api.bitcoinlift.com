@@ -10,10 +10,10 @@ if (!fs.existsSync(file)) {
     console.log('file not found', file);
     process.exit(1);
 }
-const cache = new LRU({max: 1000000});
+const cache = new LRU({max: 5000000});
 const loaded = new Set();
 const HEADER = 'INSERT INTO address VALUES ';
-const CHUNK_SIZE = 10000;
+const CHUNK_SIZE = 50000;
 
 const parseFile = () => {
     const streamFromFile = fs.createReadStream(file);
