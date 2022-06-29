@@ -11,7 +11,7 @@ if (!fs.existsSync(file)) {
     process.exit(1);
 }
 const cache = new LRU({max: 1000000});
-const loaded = [];
+const loaded = new Set();
 const HEADER = 'INSERT INTO address VALUES ';
 const CHUNK_SIZE = 10000;
 
@@ -29,13 +29,13 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if (!cache.get(address)) {
-                if (loaded.includes(address)) {
+            if (config.start <= line && !cache.get(address)) {
+                if (loaded.has(address)) {
                     cache.set(address, true);
-                    console.log('loaded', address);
+                    console.log(line, 'loaded', address);
                 } else {
-                    console.log(count++, address);
-                    loaded.push(address);
+                    console.log(line, count++, address);
+                    loaded.add(address);
                     chunk.push(address);
                     cache.set(address, true);
                     if (chunk.length >= CHUNK_SIZE) {
@@ -94,15 +94,15 @@ try {
         .pipe(new stream.Transform({
             objectMode: true,
             transform: function(row,encoding,callback) {
-                loaded.push(row.id);
-                if (loaded.length % 100000 === 0) {
-                    console.log('loaded:', loaded.length);
+                loaded.add(row.id);
+                if (loaded.size % 100000 === 0) {
+                    console.log('loaded:', loaded.size);
                 }
                 callback()
             }
         })).on('finish',() => {
             connection.end();
-            console.log('pre loaded success - loaded:', loaded.length);
+            console.log('pre loaded success - loaded:', loaded.size);
             parseFile();
         } );
 } catch (error) {
