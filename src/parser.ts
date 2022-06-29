@@ -27,7 +27,7 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if (config.start <= line) {
+            if (config.start <= line && address) {
                 if (loaded.has(address)) {
                     console.log(line, 'loaded', address);
                 } else {
