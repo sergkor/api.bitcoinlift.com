@@ -1,6 +1,5 @@
 const csv = require('fast-csv');
 const mysql = require('mysql2');
-const LRU = require('lru-cache');
 const stream = require('stream');
 import * as fs from 'fs';
 import {config} from './config';
@@ -10,7 +9,6 @@ if (!fs.existsSync(file)) {
     console.log('file not found', file);
     process.exit(1);
 }
-const cache = new LRU({max: 5000000});
 const loaded = new Set();
 const HEADER = 'INSERT INTO address VALUES ';
 const CHUNK_SIZE = 50000;
@@ -29,15 +27,13 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if (config.start <= line && !cache.get(address)) {
+            if (config.start <= line) {
                 if (loaded.has(address)) {
-                    cache.set(address, true);
                     console.log(line, 'loaded', address);
                 } else {
                     console.log(line, count++, address);
                     loaded.add(address);
                     chunk.push(address);
-                    cache.set(address, true);
                     if (chunk.length >= CHUNK_SIZE) {
                         parser.pause();
                         result.write(HEADER);
@@ -84,6 +80,7 @@ const parseFile = () => {
 }
 
 try {
+    /*
     const connection = mysql.createConnection(config.dbConnectionConfig);
     connection.query('select id from address')
         .on('error', function(err) {
@@ -105,6 +102,9 @@ try {
             console.log('pre loaded success - loaded:', loaded.size);
             parseFile();
         } );
+
+     */
+    parseFile();
 } catch (error) {
     console.log('parse error', error);
 }
