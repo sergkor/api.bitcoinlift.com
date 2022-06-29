@@ -20,19 +20,22 @@ const parseFile = () => {
     const result = fs.createWriteStream('dump.sql', {
         flags: 'a'
     });
+    let line = 0;
     let count = 0;
     let chunk = [];
     const parser = csv.parseStream(streamFromFile, {objectMode: true, headers: false});
     parser.on('error', (e) => {
         console.error("ERROR", e);
     }).on('data', data => {
+            line++;
             const address = data[0];
             if (!cache.get(address)) {
-                if (loaded.includes(address) || chunk.includes(address)) {
+                if (loaded.includes(address)) {
                     cache.set(address, true);
                     console.log('loaded', address);
                 } else {
                     console.log(count++, address);
+                    loaded.push(address);
                     chunk.push(address);
                     cache.set(address, true);
                     if (chunk.length >= CHUNK_SIZE) {
@@ -76,7 +79,7 @@ const parseFile = () => {
                 });
                 result.write(";\n");
             }
-            result.end();
+            result.end(()=> console.log('COMPLETED', line));
         });
 }
 
