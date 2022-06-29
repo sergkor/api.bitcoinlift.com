@@ -28,12 +28,13 @@ const parseFile = () => {
     }).on('data', data => {
             const address = data[0];
             if (!cache.get(address)) {
-                if (loaded.includes(address)) {
+                if (loaded.includes(address) || chunk.includes(address)) {
                     cache.set(address, true);
                     console.log('loaded', address);
                 } else {
                     console.log(count++, address);
                     chunk.push(address);
+                    cache.set(address, true);
                     if (chunk.length >= CHUNK_SIZE) {
                         parser.pause();
                         result.write(HEADER);
@@ -49,10 +50,10 @@ const parseFile = () => {
                             result.write("')");
                         });
                         result.write(";\n");
-                        cache.set(address, true);
+
                         chunk = [];
                         console.log('flushed successfully:', count);
-                        result.end(()=> process.exit(0));
+                        //result.end(()=> process.exit(0));
                         parser.resume();
                     }
                 }
