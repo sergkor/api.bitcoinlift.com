@@ -1,6 +1,4 @@
 const csv = require('fast-csv');
-const mysql = require('mysql2');
-const stream = require('stream');
 import * as fs from 'fs';
 import {config} from './config';
 
