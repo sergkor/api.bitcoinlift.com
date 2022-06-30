@@ -1,14 +1,14 @@
 const csv = require('fast-csv');
+const LRU = require('lru-cache');
 import * as fs from 'fs';
-import {config} from './config';
 
 const file = './data/utxodump.csv';
 if (!fs.existsSync(file)) {
     console.log('file not found', file);
     process.exit(1);
 }
-const loaded = new Set();
-const HEADER = `INSERT INTO address_${config.startChar} VALUES `;
+const cache = new LRU({max: 15000000});
+const HEADER = 'INSERT INTO address VALUES ';
 const CHUNK_SIZE = 50000;
 
 const parseFile = () => {
@@ -25,12 +25,11 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if (address && address.length && address[0] === config.startChar) {
-                if (loaded.has(address)) {
-                    console.log(line, 'loaded', address);
+                if (cache.has(address)) {
+                    console.log(line, 'cached', address);
                 } else {
                     console.log(line, count++, address);
-                    loaded.add(address);
+                    cache.set(address, true);
                     chunk.push(address);
                     if (chunk.length >= CHUNK_SIZE) {
                         parser.pause();
@@ -54,7 +53,6 @@ const parseFile = () => {
                         parser.resume();
                     }
                 }
-            }
         })
         .on('end', (rowCount: number) => {
             console.log("END", `Parsed ${rowCount} rows`);
