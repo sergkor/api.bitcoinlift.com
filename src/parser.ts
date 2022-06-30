@@ -7,7 +7,7 @@ if (!fs.existsSync(file)) {
     console.log('file not found', file);
     process.exit(1);
 }
-const cache = new LRU({max: 15000000});
+const cache = new LRU({max: 1000000});
 const HEADER = 'INSERT INTO address VALUES ';
 const CHUNK_SIZE = 50000;
 
