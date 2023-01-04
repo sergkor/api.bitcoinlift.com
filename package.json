@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "API for bitconlift.com",
   "scripts": {
-    "start": "./node_modules/.bin/ts-node  ./src/parser.ts"
+    "start": "./node_modules/.bin/ts-node  ./src/parser-sql.ts"
   },
   "repository": {
     "type": "git",
