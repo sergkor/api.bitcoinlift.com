@@ -16,5 +16,6 @@ export const config = {
         database: env.database
     },
     start: env.start ? convertToNumber(env.start) : 0,
-    startChar: env.startChar
+    startChar: env.startChar,
+    datadir: 'data'
 };

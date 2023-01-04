@@ -1,3 +1,5 @@
+import {config} from './config';
+
 const csv = require('fast-csv');
 import * as fs from 'fs';
 
@@ -6,66 +8,31 @@ if (!fs.existsSync(file)) {
     console.log('file not found', file);
     process.exit(1);
 }
-const HEADER = 'INSERT INTO address_1 VALUES ';
-const CHUNK_SIZE = 50000;
 
 const parseFile = () => {
     const streamFromFile = fs.createReadStream(file);
-    const result = fs.createWriteStream('dump.sql', {
-        flags: 'a'
-    });
     let line = 0;
     let count = 0;
-    let chunk = [];
     const parser = csv.parseStream(streamFromFile, {objectMode: true, headers: false});
     parser.on('error', (e) => {
         console.error("ERROR", e);
     }).on('data', data => {
             line++;
             const address = data[0];
-            console.log(line, count++, address);
-            chunk.push(address);
-        if (chunk.length >= CHUNK_SIZE) {
-            parser.pause();
-            result.write(HEADER);
-            let f = true;
-            chunk.forEach(element => {
-                if(f) {
-                    f = false;
-                } else {
-                    result.write(",");
-                }
-                result.write("('");
-                result.write(element);
-                result.write("')");
-            });
-            result.write(";\n");
-
-            chunk = [];
-            console.log('flushed successfully:', count);
-            //result.end(()=> process.exit(0));
-            parser.resume();
-        }
-
+            if (address && address.length > 5) {
+                console.log(line, count++, address);
+                const folder = address.substring(0, 5);
+                const path = `${config.datadir}/${folder}/${address}`;
+                fs.open(path, "wx", function (err, fd) {
+                    // handle error
+                    fs.close(fd, function (err) {
+                        // handle error
+                    });
+                });
+            }
         })
         .on('end', (rowCount: number) => {
             console.log("END", `Parsed ${rowCount} rows`);
-            if(chunk.length) {
-                result.write(HEADER);
-                let f = true;
-                chunk.forEach(element => {
-                    if(f) {
-                        f = false;
-                    } else {
-                        result.write(",");
-                    }
-                    result.write("('");
-                    result.write(element);
-                    result.write("')");
-                });
-                result.write(";\n");
-            }
-            result.end(()=> console.log('COMPLETED', line));
         });
 }
 
