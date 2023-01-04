@@ -1,4 +1,3 @@
-import {config} from './config';
 
 const csv = require('fast-csv');
 import * as fs from 'fs';
@@ -22,11 +21,20 @@ const parseFile = () => {
             if (address && address.length > 5) {
                 console.log(line, count++, address);
                 const folder = address.substring(0, 5);
-                const path = `${config.datadir}/${folder}/${address}`;
-                fs.open(path, "wx", function (err, fd) {
-                    // handle error
-                    fs.close(fd, function (err) {
-                        // handle error
+                // Creates /tmp/a/apple, regardless of whether `/tmp` and /tmp/a exist.
+                fs.mkdir(`data/${folder}`, { recursive: true }, (err) => {
+                    if (err) console.log(err, address);
+                    const path = `data/${folder}/${address}`;
+                    fs.open(path, "wx", function (err, fd) {
+                        if (err) {
+                            console.log('Error', address, err);
+                            return;
+                        }
+                        if (fd) {
+                            fs.close(fd, function (err) {
+                                // handle error
+                            });
+                        }
                     });
                 });
             }
