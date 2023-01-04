@@ -8,8 +8,6 @@ if (!fs.existsSync(file)) {
 }
 const HEADER = 'INSERT INTO address_1 VALUES ';
 const CHUNK_SIZE = 50000;
-const cache = new Array(1e6);
-cache.fill('');
 
 const parseFile = () => {
     const streamFromFile = fs.createReadStream(file);
@@ -25,11 +23,9 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if(address && !cache.includes(address)) {
+            if(address) {
                 console.log(line, count++, address);
                 chunk.push(address);
-                cache.push(address);
-                cache.shift();
             }
         if (chunk.length >= CHUNK_SIZE) {
             parser.pause();
