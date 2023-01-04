@@ -8,7 +8,7 @@ if (!fs.existsSync(file)) {
 }
 const HEADER = 'INSERT INTO address_1 VALUES ';
 const CHUNK_SIZE = 50000;
-const cache = new Array(4e9);
+const cache = new Array(100e8);
 cache.fill('');
 
 const parseFile = () => {
