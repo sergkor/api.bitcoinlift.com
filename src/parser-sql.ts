@@ -10,7 +10,7 @@ const HEADER = 'INSERT INTO address_1 VALUES ';
 const CHUNK_SIZE = 50000;
 const LRU = require('lru-cache');
 const cache = new LRU({
-    maxSize: 2e9,
+    max: 1e9,
     updateAgeOnHas: true
 });
 
