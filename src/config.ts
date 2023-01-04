@@ -17,5 +17,5 @@ export const config = {
     },
     start: env.start ? convertToNumber(env.start) : 0,
     startChar: env.startChar,
-    datadir: 'data'
+    datadir: 'data/output'
 };
