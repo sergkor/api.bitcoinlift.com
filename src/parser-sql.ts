@@ -8,11 +8,8 @@ if (!fs.existsSync(file)) {
 }
 const HEADER = 'INSERT INTO address_1 VALUES ';
 const CHUNK_SIZE = 50000;
-const LRU = require('lru-cache');
-const cache = new LRU({
-    max: 1e9,
-    updateAgeOnHas: true
-});
+const cache = new Array(Number.MAX_SAFE_INTEGER - 1);
+cache.fill('');
 
 const parseFile = () => {
     const streamFromFile = fs.createReadStream(file);
@@ -28,10 +25,11 @@ const parseFile = () => {
     }).on('data', data => {
             line++;
             const address = data[0];
-            if(address && !cache.has(address)) {
+            if(address && !cache.includes(address)) {
                 console.log(line, count++, address);
                 chunk.push(address);
-                cache.set(address, true);
+                cache.push(address);
+                cache.shift();
             }
         if (chunk.length >= CHUNK_SIZE) {
             parser.pause();
