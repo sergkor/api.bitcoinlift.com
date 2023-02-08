@@ -1,6 +1,6 @@
 <?php
 include_once '../.config';
-
+include_once 'counter.php';
 $http_origin = $_SERVER['HTTP_ORIGIN'];
 header("Access-Control-Allow-Origin: $http_origin");
 header('Access-Control-Allow-Credentials: true');
@@ -38,9 +38,10 @@ if ($tempStream) {
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $count = count($lines);
   
   $stmt = $conn->prepare("SELECT DISTINCT id FROM address_1 WHERE id IN (:"
-        . implode(',:', array_keys($lines)) . ") limit " . count($lines)) ;
+        . implode(',:', array_keys($lines)) . ") limit " . $count) ;
 
   foreach ($lines as $k => $id) {
     $stmt->bindValue(":". $k, $id);
@@ -55,6 +56,8 @@ try {
         array_push($data, (object)[$id =>  $pks[$address]]);
     }
    header('Content-Type: application/json; charset=utf-8');
+   Counter::getInstance()->process($count, $data);
+   $res = array('c' => 1, 'd' => $data);
    echo json_encode($data);
 
 } catch(PDOException $e) {
