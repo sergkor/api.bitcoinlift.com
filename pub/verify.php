@@ -56,7 +56,9 @@ try {
         array_push($data, (object)[$id =>  $pks[$address]]);
     }
    header('Content-Type: application/json; charset=utf-8');
-   Counter::getInstance()->process($count, $data);
+
+   \bitcoinlift\Counter::getInstance()->process($count, $data);
+
    $res = array('c' => 1, 'd' => $data);
    echo json_encode($data);
 

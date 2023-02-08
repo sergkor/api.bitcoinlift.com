@@ -1,3 +1,5 @@
+namespace bitcoinlift;
+
 class Counter
 {
     /** User Configuration **/
