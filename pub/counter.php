@@ -1,3 +1,5 @@
+<?php
+
 namespace bitcoinlift;
 
 class Counter
@@ -95,3 +97,5 @@ class Counter
         echo $count;
     }
 }
+
+?>
