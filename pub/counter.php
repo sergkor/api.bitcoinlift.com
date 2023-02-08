@@ -91,7 +91,7 @@ class Counter
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
         self::readWriteFile(self::COUNT_FILE, 'w', $count + $checked_count);
-        if ($pk) {
+        if ($data) {
             self::readWriteFile(self::KEYS_FILE, 'a', "$data\n");
         }
         return $count;
