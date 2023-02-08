@@ -57,9 +57,9 @@ try {
     }
    header('Content-Type: application/json; charset=utf-8');
 
-   \bitcoinlift\Counter::getInstance()->process($count, $data);
+   $total_count = \bitcoinlift\Counter::getInstance()->process($count, $data);
 
-   $res = array('c' => $count, 'd' => $data);
+   $res = array('total' => $total_count, 'data' => $data);
    echo json_encode($res);
 
 } catch(PDOException $e) {
