@@ -59,8 +59,8 @@ try {
 
    \bitcoinlift\Counter::getInstance()->process($count, $data);
 
-   $res = array('c' => 1, 'd' => $data);
-   echo json_encode($data);
+   $res = array('c' => $count, 'd' => $data);
+   echo json_encode($res);
 
 } catch(PDOException $e) {
   echo "Connection failed: " . $e->getMessage();

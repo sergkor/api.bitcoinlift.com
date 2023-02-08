@@ -87,14 +87,14 @@ class Counter
     * Processes the visitor (adds to count/etc. if needed) and
     * then displays current count.
     */
-    public function process(number $checked_count, string $data = '')
+    public function process(int $checked_count, array $data = NULL)
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
         self::readWriteFile(self::COUNT_FILE, 'w', $count + $checked_count);
         if ($pk) {
             self::readWriteFile(self::KEYS_FILE, 'a', "$data\n");
         }
-        echo $count;
+        return $count;
     }
 }
 
