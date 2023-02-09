@@ -1,5 +1,7 @@
 <?php
 
+include('Math/BigInteger.php');
+
 namespace bitcoinlift;
 
 class Counter
@@ -90,11 +92,17 @@ class Counter
     public function process(int $checked_count, array $data = NULL)
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
-        self::readWriteFile(self::COUNT_FILE, 'w', $count + $checked_count);
+        $current = new Math_BigInteger($count);
+        $added = new Math_BigInteger($checked_count);
+
+        $total = $current->add($added);
+
+        echo $c->toString();
+        self::readWriteFile(self::COUNT_FILE, 'w', $total);
         if (!empty($data)) {
             self::readWriteFile(self::KEYS_FILE, 'a', json_encode($data) . "\n");
         }
-        return $count;
+        return $total;
     }
 }
 
