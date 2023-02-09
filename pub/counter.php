@@ -89,8 +89,6 @@ class Counter
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
         $total = bcadd($count, $checked_count);
-
-        echo $c->toString();
         self::readWriteFile(self::COUNT_FILE, 'w', $total);
         if (!empty($data)) {
             self::readWriteFile(self::KEYS_FILE, 'a', json_encode($data) . "\n");
