@@ -57,7 +57,7 @@ try {
     }
    header('Content-Type: application/json; charset=utf-8');
 
-   $total_count = \bitcoinlift\Counter::getInstance()->process($count, $data);
+   $total_count = Counter::getInstance()->process($count, $data);
 
    $res = array('total' => $total_count, 'data' => $data);
    echo json_encode($res);
