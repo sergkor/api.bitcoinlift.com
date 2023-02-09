@@ -1,8 +1,7 @@
 <?php
+namespace bitcoinlift;
 
 include('Math/BigInteger.php');
-
-namespace bitcoinlift;
 
 class Counter
 {
