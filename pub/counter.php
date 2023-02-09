@@ -1,5 +1,4 @@
 <?php
-include('Math/BigInteger.php');
 
 class Counter
 {
@@ -89,8 +88,8 @@ class Counter
     public function process(int $checked_count, array $data = NULL)
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
-        $current = new Math_BigInteger($count);
-        $added = new Math_BigInteger($checked_count);
+        $current = new \phpseclib3\Math\BigInteger($count);
+        $added = new \phpseclib3\Math\BigInteger($checked_count);
 
         $total = $current->add($added);
 
