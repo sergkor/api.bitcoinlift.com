@@ -88,8 +88,8 @@ class Counter
     public function process(int $checked_count, array $data = NULL)
     {
         $count = self::readWriteFile(self::COUNT_FILE, 'r');
-        $current = new \phpseclib3\Math\BigInteger($count);
-        $added = new \phpseclib3\Math\BigInteger($checked_count);
+        $current = new \Phpseclib\Math\BigInteger($count);
+        $added = new \Phpseclib\Math\BigInteger($checked_count);
 
         $total = $current->add($added);
 
